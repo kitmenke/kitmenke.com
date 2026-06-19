@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+
+<head>
+
+<title>Template</title>
+
+<script type="text/javascript">
+
+// transforms a date object into a string
+function getShortDateString(oDate) {
+	// month is 0 based (0 - 11)
+	var strDate = getDateStr(oDate.getMonth()+1) + "/";
+	strDate += getDateStr(oDate.getDate()) + "/";
+	strDate += getDateStr(oDate.getFullYear());
+	return strDate;
+}
+
+// returns the part of a date as a string and pads with a 0 if necessary
+function getDateStr(d) {
+	if (!d) {
+		return '';
+	}
+	if (d < 10) {
+		return '0' + d.toString();
+	}
+	return d.toString();
+}
+
+// sets two textboxes to the start and end dates for a relative
+// time period
+function setRelativeDate(timePeriod)
+{
+    var txtStartDate = document.getElementById('txtStartDate');
+	 var txtEndDate = document.getElementById('txtEndDate');
+    
+    switch(timePeriod)
+    {
+        case "today":
+            var today = new Date();
+            txtStartDate.value = getShortDateString(today);
+            txtEndDate.value = txtStartDate.value;
+            break;
+        case "yesterday":
+            var yesterday = new Date();
+            yesterday.setDate(yesterday.getDate()-1);
+            txtStartDate.value = getShortDateString(yesterday);
+            txtEndDate.value = txtStartDate.value;
+            break;
+        case "thisweek": // sunday to saturday
+            var thisWeek = new Date();
+            // set the date to most recent sunday Sunday
+            thisWeek.setDate(thisWeek.getDate() - thisWeek.getDay());
+            txtStartDate.value = getShortDateString(thisWeek);
+            // set the date to last week's Saturday
+            thisWeek.setDate(thisWeek.getDate() + 6);
+            txtEndDate.value = getShortDateString(thisWeek);
+            break;
+        case "lastweek":
+            var lastWeek = new Date();
+            // set the date to last week's Sunday
+            lastWeek.setDate(lastWeek.getDate() - lastWeek.getDay() - 7);
+            txtStartDate.value = getShortDateString(lastWeek);
+            // set the date to last week's Saturday
+            lastWeek.setDate(lastWeek.getDate() + 6);
+            txtEndDate.value = getShortDateString(lastWeek);
+            break;
+        case "thismonth":
+            var lastDayOfThisMonth = new Date();
+            // go to the next month
+            var nextMonth = lastDayOfThisMonth.getMonth() + 1;
+            lastDayOfThisMonth.setMonth(nextMonth);
+            // go to the last day of the previous month (this month)
+            lastDayOfThisMonth.setDate(0);
+            txtEndDate.value = getShortDateString(lastDayOfThisMonth);
+            lastDayOfThisMonth.setDate(1);
+            txtStartDate.value = getShortDateString(lastDayOfThisMonth);
+            break;
+        case "lastmonth":
+            var lastDayOfLastMonth = new Date(); // now
+            lastDayOfLastMonth.setDate(0); // last day of last month            
+            // set the end date first
+            txtEndDate.value = getShortDateString(lastDayOfLastMonth);
+            lastDayOfLastMonth.setDate(1);
+            txtStartDate.value = getShortDateString(lastDayOfLastMonth);
+            break;
+        case "thisyear":
+            var lastDayOfThisYear = new Date();
+            lastDayOfThisYear.setMonth(11);
+            lastDayOfThisYear.setDate(31);
+            txtEndDate.value = getShortDateString(lastDayOfThisYear);
+            lastDayOfThisYear.setMonth(0); // January
+            lastDayOfThisYear.setDate(1); // 1st
+            txtStartDate.value = getShortDateString(lastDayOfThisYear);
+            break;
+        case "lastyear":
+            var lastDayOfLastYear = new Date();
+            // -1 means last year
+            // 11 means December and there always is a 31st of december
+            var thisYear = lastDayOfLastYear.getFullYear();
+            lastDayOfLastYear.setFullYear(thisYear - 1, 11, 31);
+            txtEndDate.value = getShortDateString(lastDayOfLastYear);
+            lastDayOfLastYear.setMonth(0); // January
+            lastDayOfLastYear.setDate(1); // 1st
+            txtStartDate.value = getShortDateString(lastDayOfLastYear);
+            break;
+    }
+}
+
+</script>
+
+</head>
+
+<body>
+
+Click to show the start and end date relative to today:<br/>
+<a href="javascript: void(0);" onclick="return setRelativeDate('today')">Today</a>&nbsp;|&nbsp;
+<a href="javascript: void(0);" onclick="return setRelativeDate('thisweek')">This Week</a>&nbsp;|&nbsp;
+<a href="javascript: void(0);" onclick="return setRelativeDate('thismonth')">This Month</a>&nbsp;|&nbsp;
+<a href="javascript: void(0);" onclick="return setRelativeDate('thisyear')">This Year</a>
+<br/>
+<a href="javascript: void(0);" onclick="return setRelativeDate('yesterday')">Yesterday</a>&nbsp;|&nbsp;
+<a href="javascript: void(0);" onclick="return setRelativeDate('lastweek')">Last Week</a>&nbsp;|&nbsp;
+<a href="javascript: void(0);" onclick="return setRelativeDate('lastmonth')">Last Month</a>&nbsp;|&nbsp;
+<a href="javascript: void(0);" onclick="return setRelativeDate('lastyear')">Last Year</a>
+<br/><br/>
+<label for="txtStartDate">Start Date:</label><input id="txtStartDate" type="text" />
+<br/>
+<label for="txtEndDate">End Date:</label><input id="txtEndDate" type="text" />
+
+</body>
+</html>
